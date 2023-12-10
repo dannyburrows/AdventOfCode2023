@@ -46,6 +46,7 @@ class Game:
     self.game_text = game_text
     self.game_number = None # stores game number to be used during summation
     self.subsets = [] # stores GameSubset objects
+    self.min_colors = {'red': 0, 'green': 0, 'blue': 0} # stores min number of cubes for each color
     self.parse_text()
   
   def parse_text(self):
@@ -61,6 +62,19 @@ class Game:
     for subset in subsets:
       self.subsets.append(GameSubset(subset))
   
+  def find_mins(self):
+    for subset in self.subsets:
+      if subset.red.number > self.min_colors['red']:
+        self.min_colors['red'] = subset.red.number
+      if subset.green.number > self.min_colors['green']:
+        self.min_colors['green'] = subset.green.number
+      if subset.blue.number > self.min_colors['blue']:
+        self.min_colors['blue'] = subset.blue.number
+  
+  def get_power_sum(self):
+    self.find_mins()
+    return self.min_colors['red'] * self.min_colors['green'] * self.min_colors['blue']
+  
   def is_valid(self):
     for subset in self.subsets:
       if not subset.is_valid():
@@ -69,24 +83,36 @@ class Game:
 
 class GameSum:
   def __init__(self) -> None:
+    self.games = []
     self.games_text = self.get_data()
+    self.build_games()
+
+  def build_games(self):
+    games = self.games_text.split("\n")
+    for game in games:
+      self.games.append(Game(game))
 
   def get_data(self):
     with open("./data.txt", "r") as file:
       return file.read()
+    
+  def get_power_sum(self):
+    sum = 0
+    for game in self.games:
+      sum += game.get_power_sum()
+    return sum
 
   def get_sum(self):
-    games = self.games_text.split("\n")
     sum = 0
-    for game in games:
-      game = Game(game)
+    for game in self.games:
       if game.is_valid():
         sum += game.game_number
-    return sum
-  
+    return sum # 2683
+    
 def main():
   game_sum = GameSum()
-  print(game_sum.get_sum())
+  print("Sum", game_sum.get_sum())
+  print("Power Sum", game_sum.get_power_sum())
 
 if __name__ == '__main__':
   main()

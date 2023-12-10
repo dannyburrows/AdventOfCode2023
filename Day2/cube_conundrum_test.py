@@ -20,6 +20,13 @@ class TestGame(unittest.TestCase):
   def test_is_valid(self):
     game = Game("Game 1: 15 blue, 4 red; 1 red, 2 green, 6 blue; 2 green")
     self.assertFalse(game.is_valid(), "Should be False")
+  
+  def test_find_mins(self):
+    game = Game("Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 7 green")
+    game.find_mins()
+    game.min_colors['blue'] = 6
+    game.min_colors['red'] = 4
+    game.min_colors['green'] = 7
 
 class TestGameSubset(unittest.TestCase):
   def test_parse_subset(self):
@@ -35,7 +42,6 @@ class TestGameSubset(unittest.TestCase):
     self.assertFalse(subset2.is_valid(), "Should be False")
     subset3 = GameSubset("15 green")
     self.assertFalse(subset3.is_valid(), "Should be False")
-
 
 class TestCube(unittest.TestCase):
   def test_is_valid(self):
